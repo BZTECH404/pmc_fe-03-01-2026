@@ -600,8 +600,41 @@ function TenderForm() {
               </FormControl>
             </Grid>
             {/*  */}
-            <Grid container justify="center" style={{ marginTop: '20px' }}>
+            <Grid container justify="center" style={{ marginTop: '20px', gap: '10px' }}>
               <Button type="submit" variant="contained" color="primary">Submit</Button>
+              <Button variant="contained" style={{ backgroundColor: '#ff9800', color: '#fff' }} onClick={() => {
+                const emptyTender = {
+                  name: 'Sample Tender',
+                  title: 'Sample Tender - Edit This',
+                  Emd: '0',
+                  State: 'Maharashtra',
+                  description: 'Sample tender description - please edit',
+                  property_history: '',
+                  scheme: '',
+                  tender_value: '0',
+                  gross_area: '0',
+                  doc: '',
+                  ward: '',
+                  cts_number: '',
+                  startDate: new Date().toISOString().split('T')[0],
+                  endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                  user: ''
+                };
+                axios.post(`${baseurl}/api/create`, emptyTender, {
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `${localStorage.getItem('token')}`
+                  }
+                }).then(response => {
+                  if (response.status === 200) {
+                    alert('Empty tender created! You can now edit it.');
+                    window.location.reload();
+                  }
+                }).catch(error => {
+                  console.log('Error:', error);
+                  alert('Error creating empty tender.');
+                });
+              }}>Empty Tender</Button>
             </Grid>
           </form>
           <Grid />
