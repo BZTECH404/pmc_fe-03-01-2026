@@ -23,8 +23,8 @@ function Header() {
     navigate('/')
   };
 
-  const [loginEmail, setLoginEmail] = useState('shubham@admin.com');
-  const [loginPassword, setLoginPassword] = useState('password123');
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
