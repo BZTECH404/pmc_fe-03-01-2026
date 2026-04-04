@@ -60,7 +60,7 @@ function Copyright() {
     </Container>
   );
 }
-const options = ['Update', 'Delete'];
+const options = ['Update', 'Delete', 'Show/Hide'];
 
 // Define ITEM_HEIGHT
 const ITEM_HEIGHT = 48;
@@ -336,7 +336,13 @@ function TenderForm() {
       await axios.delete(`${baseurl}/api/delete/${currentItem._id}`, {headers: {
         'Authorization': `${localStorage.getItem('token')}`
       }});
-      // Handle delete logic here
+      tenderData();
+    } else if (option === 'Show/Hide') {
+      await axios.delete(`${baseurl}/api/delete/${currentItem._id}`, {headers: {
+        'Authorization': `${localStorage.getItem('token')}`
+      }});
+      alert(`Tender "${currentItem.title}" visibility toggled.`);
+      tenderData();
     }
   };
 
@@ -618,7 +624,6 @@ function TenderForm() {
                   cts_number: '',
                   startDate: new Date().toISOString().split('T')[0],
                   endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                  user: ''
                 };
                 axios.post(`${baseurl}/api/create`, emptyTender, {
                   headers: {
