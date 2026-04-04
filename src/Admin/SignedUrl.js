@@ -37,10 +37,11 @@ else{
   key1=`/${extension}`
 }
 try {
-  const response = await axios.post("https://tow8pxaaig.execute-api.ap-south-1.amazonaws.com/prod/gsu", {
+  const response = await axios.post("https://s3-signedurl-shubham.vercel.app/gsu", {
     bucket: bucketName,
     key1,
     Expires: 300,
+    account: "REKHA",
   });
 
   let arr = [response.data.signedUrl, key1];
