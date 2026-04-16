@@ -160,6 +160,17 @@ function Bank() {
     });
 
     const [users, setUsers] = useState([]);
+    const [bankList, setBankList] = useState([]);
+
+    const fetchBankList = async () => {
+        try {
+            const response = await axios.get(`${baseurl}/api/bankdetails`);
+            setBankList(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     useEffect(() => {
         const fetchUsers = async () => {
             const token = localStorage.getItem('token');
@@ -172,6 +183,7 @@ function Bank() {
             setUsers(societyUsers);
         };
         fetchUsers();
+        fetchBankList();
     }, [])
 
     const handleChange = (e) => {
@@ -191,13 +203,16 @@ function Bank() {
                 }
             });
             if (response.status === 201) {
-               alert('Bank already added');
-               setFormData('') // reset the form
-            } else {
-                //console.log(response.data);
+               Swal.fire({ icon: 'success', title: 'Bank details added successfully', showConfirmButton: false, timer: 1500 });
+               setFormData({ account_holder_name: '', account_number: '', bank_ifsc: '', bank_name: '', account_type: '', bank_branch: '', bank_user: '' });
+               fetchBankList();
             }
         } catch (error) {
-            console.error(error);
+            if (error.response && error.response.status === 400) {
+                Swal.fire({ icon: 'warning', title: 'Bank details already exist for this society', showConfirmButton: true });
+            } else {
+                console.error(error);
+            }
         }
     }
 
@@ -322,6 +337,47 @@ function Bank() {
                             </Button>
                         </div>
                     </Form>
+
+                    <br />
+                    <Paper className={classes.paper}>
+                        <Typography variant="h6" style={{ textAlign: 'center', marginBottom: '10px' }}>
+                            Existing Bank Details
+                        </Typography>
+                        <TableContainer>
+                            <Table size="small">
+                                <TableHead>
+                                    <TableRow style={{ backgroundColor: '#f5f5f5' }}>
+                                        <TableCell><strong>#</strong></TableCell>
+                                        <TableCell><strong>Society</strong></TableCell>
+                                        <TableCell><strong>Account Holder</strong></TableCell>
+                                        <TableCell><strong>Account Number</strong></TableCell>
+                                        <TableCell><strong>Bank Name</strong></TableCell>
+                                        <TableCell><strong>IFSC</strong></TableCell>
+                                        <TableCell><strong>Branch</strong></TableCell>
+                                        <TableCell><strong>Account Type</strong></TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {bankList.length > 0 ? bankList.map((bank, index) => (
+                                        <TableRow key={bank._id}>
+                                            <TableCell>{index + 1}</TableCell>
+                                            <TableCell>{bank.bank_user ? bank.bank_user.name : 'N/A'}</TableCell>
+                                            <TableCell>{bank.account_holder_name}</TableCell>
+                                            <TableCell>{bank.account_number}</TableCell>
+                                            <TableCell>{bank.bank_name}</TableCell>
+                                            <TableCell>{bank.bank_ifsc}</TableCell>
+                                            <TableCell>{bank.bank_branch}</TableCell>
+                                            <TableCell>{bank.account_type}</TableCell>
+                                        </TableRow>
+                                    )) : (
+                                        <TableRow>
+                                            <TableCell colSpan={8} style={{ textAlign: 'center' }}>No bank details found</TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Paper>
                 </Container>
             </main>
         </div>
