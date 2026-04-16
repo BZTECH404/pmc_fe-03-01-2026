@@ -156,14 +156,21 @@ function Header() {
   const me = async () => {
     const token = localStorage.getItem('token');
     if (token) {
-      const response = await axios.get(`${baseurl}/api/me`, {
-        headers: {
-          Authorization: `${token}`
+      try {
+        const response = await axios.get(`${baseurl}/api/me`, {
+          headers: {
+            Authorization: `${token}`
+          }
+        });
+        setUser(response.data.user)
+        if (!response.data.user.phone) {
+          setOpenDialog(true);
         }
-      });
-      setUser(response.data.user)
-      if (!response.data.user.phone) {
-        setOpenDialog(true);
+      } catch (err) {
+        if (err.response && err.response.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('userId');
+        }
       }
     }
 
