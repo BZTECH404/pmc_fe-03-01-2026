@@ -187,10 +187,14 @@ function TenderForm() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (!form.user) {
+      alert('Please select a Society user before creating a tender.');
+      return;
+    }
     form.doc=doc
     const dataToPost = {
       ...form,
-      
+
 
     };
     console.log(dataToPost)
@@ -609,6 +613,10 @@ function TenderForm() {
             <Grid container justify="center" style={{ marginTop: '20px', gap: '10px' }}>
               <Button type="submit" variant="contained" color="primary">Submit</Button>
               <Button variant="contained" style={{ backgroundColor: '#ff9800', color: '#fff' }} onClick={() => {
+                if (!form.user) {
+                  alert('Please select a Society user first before creating an empty tender.');
+                  return;
+                }
                 const emptyTender = {
                   name: 'Sample Tender',
                   title: 'Sample Tender - Edit This',
@@ -624,6 +632,7 @@ function TenderForm() {
                   cts_number: '',
                   startDate: new Date().toISOString().split('T')[0],
                   endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                  user: form.user,
                 };
                 axios.post(`${baseurl}/api/create`, emptyTender, {
                   headers: {
@@ -804,6 +813,19 @@ function TenderForm() {
               <TextField label="Start Date" name="startDate" type="date" value={currentTender.startDate} onChange={handleTenderChange} InputLabelProps={{ shrink: true }} fullWidth />
               <TextField label="End Date" name="endDate" type="date" value={currentTender.endDate} onChange={handleTenderChange} InputLabelProps={{ shrink: true }} fullWidth />
               <br />
+              <FormControl fullWidth style={{ marginTop: '10px' }}>
+                <InputLabel id="update-user-select-label">Assign Society *</InputLabel>
+                <Select
+                  labelId="update-user-select-label"
+                  value={currentTender.user || ''}
+                  onChange={handleTenderChange}
+                  name="user"
+                >
+                  {users.map((user) => (
+                    <MenuItem key={user._id} value={user._id}>{user.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
               <br />
               <Grid style={{ width: "50%" }} item xs={4}>
                 {/* folders */}
